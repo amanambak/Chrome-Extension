@@ -1,0 +1,7 @@
+# Extension build artifacts
+node_modules/
+dist/
+
+# API keys — never commit real keys
+config.js
+.env
