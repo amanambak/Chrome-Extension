@@ -159,32 +159,60 @@ function createAiResponseCard(id) {
   const badge = document.createElement('span');
   badge.className = 'ai-badge loading';
   badge.textContent = 'Thinking...';
+
+  const summary = document.createElement('div');
+  summary.className = 'query-summary';
+  summary.style.display = 'none';
   
   const content = document.createElement('div');
   el.appendChild(badge);
+  el.appendChild(summary);
   el.appendChild(content);
   
-  return { element: el, badge, content, id, fullText: '', typeDetected: false };
+  return { element: el, badge, summary, content, id, fullText: '', typeDetected: false };
 }
 
 function appendChunkToAiCard(card, text) {
   card.fullText += text;
+
+  // Handle Summary
+  const hasSummaryMarker = card.fullText.includes('[SUMMARY]');
+  if (hasSummaryMarker) {
+    const start = card.fullText.indexOf('[SUMMARY]') + 9;
+    let end = card.fullText.indexOf('[ANSWER]');
+    if (end === -1) end = card.fullText.indexOf('[SUGGESTION]');
+    
+    if (end !== -1) {
+      card.summary.textContent = `Topic: ${card.fullText.substring(start, end).trim()}`;
+    } else {
+      card.summary.textContent = `Topic: ${card.fullText.substring(start).trim()}`;
+    }
+    card.summary.style.display = 'block';
+  }
+
+  // Handle Badge and Content
   if (!card.typeDetected) {
     if (card.fullText.includes('[ANSWER]')) {
       card.typeDetected = true;
       card.badge.className = 'ai-badge answer';
       card.badge.textContent = 'Answer';
-      card.content.textContent = card.fullText.replace('[ANSWER]', '').trim();
     } else if (card.fullText.includes('[SUGGESTION]')) {
       card.typeDetected = true;
       card.badge.className = 'ai-badge suggestion';
       card.badge.textContent = 'Suggestion';
-      card.content.textContent = card.fullText.replace('[SUGGESTION]', '').trim();
-    } else {
-      card.content.textContent = card.fullText;
     }
+  }
+
+  if (card.typeDetected) {
+    const marker = card.badge.textContent === 'Answer' ? '[ANSWER]' : '[SUGGESTION]';
+    const parts = card.fullText.split(marker);
+    if (parts.length > 1) {
+      card.content.textContent = parts[1].trim();
+    }
+  } else if (!hasSummaryMarker) {
+    card.content.textContent = card.fullText;
   } else {
-    card.content.textContent += text;
+    card.content.textContent = '';
   }
 }
 

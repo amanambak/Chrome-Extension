@@ -13,8 +13,9 @@ const CONFIG = {
   DEEPGRAM_WS_URL: "wss://api.deepgram.com/v1/listen",
   DEEPGRAM_PARAMS: {
     model: "nova-3",
-    utterance_end_ms: 1500,
-    endpointing: 500,
+    language: "multi",
+    utterance_end_ms: 1000,
+    endpointing: 100,
     encoding: "linear16",
     sample_rate: 16000,
   },

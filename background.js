@@ -105,7 +105,7 @@ async function streamGeminiResponse(text, utteranceId) {
   const apiKey = CONFIG.GEMINI_API_KEY;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
-  const systemPrompt = "Classify user utterance as QUESTION or STATEMENT. If QUESTION: Provide concise answer. If STATEMENT: Provide 2-3 short suggestions. Prefix with [ANSWER] or [SUGGESTION].";
+  const systemPrompt = "Classify user utterance as QUESTION or STATEMENT. Provide a very brief (max 5 words) summary of the utterance. If QUESTION: Provide concise answer. If STATEMENT: Provide 2-3 short suggestions. You MUST respond in Hinglish (a natural mix of Hindi and English using Roman script). Format: [SUMMARY] summary text [ANSWER] answer text OR [SUMMARY] summary text [SUGGESTION] suggestion text.";
 
   try {
     const response = await fetch(url, {
